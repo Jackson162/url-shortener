@@ -9,9 +9,9 @@ const Url = require('./models/Url')
 require('./config/mongoose')
 
 const app = express()
-const PORT = 3000
-const host = 'localhost'
-const http = 'http'
+const PORT = process.env.PORT || 3000
+const HOST = process.env.HOST || 'localhost'
+const PROTOCAL = process.env.PROTOCAL || 'http'
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
@@ -40,11 +40,11 @@ app.post('/', async (req, res) => {
         originalUrl: inputUrl,
         shortUrl
       }).then(() => {
-        const url = `${http}://${host}:${PORT}/${shortUrl}`
+        const url = `${PROTOCAL}://${HOST}:${PORT}/${shortUrl}`
         res.render('show', { url })
       })
     } else if (dataOfInterest) {
-      const url = `${http}://${host}:${PORT}/${dataOfInterest.shortUrl}`
+      const url = `${PROTOCAL}://${HOST}:${PORT}/${dataOfInterest.shortUrl}`
       res.render('show', { url })
     }
   } catch(err) {
