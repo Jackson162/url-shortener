@@ -10,6 +10,8 @@ require('./config/mongoose')
 
 const app = express()
 const PORT = 3000
+const host = 'localhost'
+const http = 'http'
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
@@ -22,6 +24,7 @@ app.get('/', (req, res) => {
     res.render('index')
   } catch(err) {
     console.error(err)
+    res.render('error')
   }
 })
 
@@ -30,19 +33,23 @@ app.post('/', async (req, res) => {
     const inputUrl = req.body.url //some query strings contain capital letters
     const urls = await funcs.fetchAllData(Url)
     const dataOfInterest = urls.find(url => url.originalUrl.includes(inputUrl))
-    //not found in db
+    //if not found in db
     if (!dataOfInterest) {
       const shortUrl = funcs.generateRandomUrl(numbers, lowerCases, upperCases)
-      console.log(numbers)
       Url.create({
         originalUrl: inputUrl,
         shortUrl
-      }).then(() => res.render('show', { shortUrl }))
+      }).then(() => {
+        const url = `${http}://${host}:${PORT}/${shortUrl}`
+        res.render('show', { url })
+      })
     } else if (dataOfInterest) {
-      res.render('show', { shortUrl: dataOfInterest.shortUrl })
+      const url = `${http}://${host}:${PORT}/${dataOfInterest.shortUrl}`
+      res.render('show', { url })
     }
-  } catch {
+  } catch(err) {
     console.error(err)
+    res.render('error')
   }
 })
 
@@ -58,6 +65,7 @@ app.get('/:shortUrl', async (req, res) => {
     }
   } catch(err) {
     console.error(err)
+    res.render('error')
   }
 })
 
