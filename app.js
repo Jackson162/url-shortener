@@ -32,19 +32,22 @@ app.post('/', async (req, res) => {
   try {
     const inputUrl = req.body.url //some query strings contain capital letters
     const urls = await funcs.fetchAllData(Url)
-    const dataOfInterest = urls.find(url => url.originalUrl.includes(inputUrl))
-    //if not found in db
-    if (!dataOfInterest) {
-      const shortUrl = funcs.generateRandomUrl(numbers, lowerCases, upperCases)
-      Url.create({
-        originalUrl: inputUrl,
-        shortUrl
-      }).then(() => {
-        const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${shortUrl}` : `${PROTOCAL}://${HOST}/${shortUrl}`
-        res.render('show', { url })
-      })
-    } else if (dataOfInterest) {
-      const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${dataOfInterest.shortUrl}` : `${PROTOCAL}://${HOST}/${dataOfInterest.shortUrl}`
+    const urlOfInterest = urls.find(url => url.originalUrl.includes(inputUrl))
+    //whether found in db
+    if (!urlOfInterest) {
+      let shortUrl = ''
+      let repeatedShortUrl = ''
+      //whether shortUrl repeat
+      do {
+        shortUrl = funcs.generateRandomUrl(numbers, lowerCases, upperCases)
+        repeatedShortUrl = urls.find(url => url.shortUrl === shortUrl)
+        console.log('repeatedShortUrl: ', repeatedShortUrl)
+      } while (repeatedShortUrl)
+      Url.create({ originalUrl: inputUrl, shortUrl })
+      const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${shortUrl}` : `${PROTOCAL}://${HOST}/${shortUrl}`
+      res.render('show', { url })
+    } else if (urlOfInterest) {
+      const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${urlOfInterest.shortUrl}` : `${PROTOCAL}://${HOST}/${urlOfInterest.shortUrl}`
       res.render('show', { url })
     }
   } catch(err) {
@@ -57,10 +60,10 @@ app.get('/:shortUrl', async (req, res) => {
   try {
     const shortUrl = req.params.shortUrl
     const urls = await funcs.fetchAllData(Url)
-    const dataOfInterest = urls.find(url => url.shortUrl.includes(shortUrl))
-    if (dataOfInterest) {
-      res.redirect(dataOfInterest.originalUrl)
-    } else if (!dataOfInterest) {
+    const urlOfInterest = urls.find(url => url.shortUrl.includes(shortUrl))
+    if (urlOfInterest) {
+      res.redirect(urlOfInterest.originalUrl)
+    } else if (!urlOfInterest) {
       res.render('noshow')
     }
   } catch(err) {
