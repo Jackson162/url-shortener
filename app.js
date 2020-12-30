@@ -1,4 +1,8 @@
 const express = require('express')
+
+const Url = require('./models/Url')
+require('./config/mongoose')
+
 const app = express()
 const PORT = 3000
 
