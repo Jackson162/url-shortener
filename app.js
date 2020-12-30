@@ -14,6 +14,7 @@ const PORT = 3000
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
+app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
@@ -26,9 +27,9 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
   try {
-    const inputUrl = req.body.url.toLowerCase()
+    const inputUrl = req.body.url //some query strings contain capital letters
     const urls = await funcs.fetchAllData(Url)
-    const dataOfInterest = urls.find(url => url.originalUrl.toLowerCase().includes(inputUrl))
+    const dataOfInterest = urls.find(url => url.originalUrl.includes(inputUrl))
     //not found in db
     if (!dataOfInterest) {
       const shortUrl = funcs.generateRandomUrl(numbers, lowerCases, upperCases)
@@ -41,6 +42,21 @@ app.post('/', async (req, res) => {
       res.render('show', { shortUrl: dataOfInterest.shortUrl })
     }
   } catch {
+    console.error(err)
+  }
+})
+
+app.get('/:shortUrl', async (req, res) => {
+  try {
+    const shortUrl = req.params.shortUrl
+    const urls = await funcs.fetchAllData(Url)
+    const dataOfInterest = urls.find(url => url.shortUrl.includes(shortUrl))
+    if (dataOfInterest) {
+      res.redirect(dataOfInterest.originalUrl)
+    } else if (!dataOfInterest) {
+      res.render('noshow')
+    }
+  } catch(err) {
     console.error(err)
   }
 })
