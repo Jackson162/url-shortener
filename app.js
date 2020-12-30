@@ -40,11 +40,11 @@ app.post('/', async (req, res) => {
         originalUrl: inputUrl,
         shortUrl
       }).then(() => {
-        const url = `${PROTOCAL}://${HOST}:${PORT}/${shortUrl}`
+        const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${shortUrl}` : `${PROTOCAL}://${HOST}/${shortUrl}`
         res.render('show', { url })
       })
     } else if (dataOfInterest) {
-      const url = `${PROTOCAL}://${HOST}:${PORT}/${dataOfInterest.shortUrl}`
+      const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${dataOfInterest.shortUrl}` : `${PROTOCAL}://${HOST}/${dataOfInterest.shortUrl}`
       res.render('show', { url })
     }
   } catch(err) {
