@@ -1,9 +1,22 @@
-const numbers = Array.from(new Array(10).keys()).map(number => String(number))
-const lowerCase = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] 
-const upperCase = lowerCase.map(letter => letter.toUpperCase())
-const generateRandomUrl = (numbers, lowerCase, upperCase) => {
+// const fs = require('fs')
+// const numbers = Array.from(new Array(10).keys()).map(number => String(number))
+// const lowerCases = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] 
+// const upperCases = lowerCase.map(letter => letter.toUpperCase())
+
+
+// let dataJSON = JSON.stringify({
+//   numbers,
+//   lowerCase,
+//   upperCase
+// })
+
+// fs.writeFile('dataBox.json', dataJSON, (err) => {
+//   if (err) console.log(err)
+// })
+
+const generateRandomUrl = (numbers, lowerCases, upperCases) => {
   const shortUrl = []
-  const collectionOfThree = [numbers, lowerCase, upperCase].map(arr => JSON.parse(JSON.stringify(arr)))
+  const collectionOfThree = JSON.parse(JSON.stringify([numbers, lowerCases, upperCases])) //deep copy
   // console.log('collectionOfThree: ', collectionOfThree)
   //select element from each array
   for (i = 0; i < collectionOfThree.length; i++) {
@@ -33,5 +46,16 @@ const generateRandomUrl = (numbers, lowerCase, upperCase) => {
   return shortUrl.join('')
 }
 
-module.exports =  generateRandomUrl
+const fetchAllData = async (model) => {
+  try {
+    //catch can detect err on Promise chain (tested)
+    const allData = await model.find().lean().then(allData => allData) 
+    return allData
+  } catch(err) {
+    console.log(err)
+    return err
+  } 
+}
+
+module.exports = { generateRandomUrl, fetchAllData }
 
