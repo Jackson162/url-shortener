@@ -41,6 +41,7 @@ app.post('/', async (req, res) => {
       do {
         shortUrl = funcs.generateRandomUrl(numbers, lowerCases, upperCases)
         repeatedShortUrl = urls.find(url => url.shortUrl === shortUrl)
+        console.log('shortUrl: ', shortUrl)
         console.log('repeatedShortUrl: ', repeatedShortUrl)
       } while (repeatedShortUrl)
       Url.create({ originalUrl: inputUrl, shortUrl })
@@ -51,6 +52,7 @@ app.post('/', async (req, res) => {
       res.render('show', { url })
     }
   } catch(err) {
+    console.log('err handling in router')
     console.error(err)
     res.render('error')
   }
@@ -67,6 +69,7 @@ app.get('/:shortUrl', async (req, res) => {
       res.render('noshow')
     }
   } catch(err) {
+    console.log('err handling in router')
     console.error(err)
     res.render('error')
   }

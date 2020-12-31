@@ -15,7 +15,6 @@
 // })
 
 const generateRandomUrl = (numbers, lowerCases, upperCases) => {
-  try{
     const shortUrl = []
     const collectionOfThree = JSON.parse(JSON.stringify([numbers, lowerCases, upperCases])) //deep copy
     // console.log('collectionOfThree: ', collectionOfThree)
@@ -45,24 +44,15 @@ const generateRandomUrl = (numbers, lowerCases, upperCases) => {
     
     // console.log(shortUrl.join(''))
     return shortUrl.join('')
-  } catch(err) {
-    console.error(err)
-    return err
-  }
 }
 
 const fetchAllData = async (model) => {
-  try {
-    //catch can detect err on Promise chain (tested)
+    //catch in app.js can detect err on Promise chain (tested)
     const allData = await model.find()
       .lean()
       .then(allData => allData)
-      .catch(err => err) 
+       
     return allData
-  } catch(err) {
-    console.error(err)
-    return err
-  } 
 }
 
 module.exports = { generateRandomUrl, fetchAllData }
