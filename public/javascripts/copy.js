@@ -1,4 +1,5 @@
 const shortUrl = document.querySelector('#short-url')
+const copyBtn = document.querySelector('#copy-btn')
 
 function copy() {
   console.log(shortUrl)
@@ -7,4 +8,8 @@ function copy() {
   }, function() {
     alert('something is wrong')
   });
+}
+
+if (copyBtn) {
+  copyBtn.addEventListener('click', copy)
 }

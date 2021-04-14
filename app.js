@@ -44,7 +44,7 @@ app.post('/', async (req, res) => {
         console.log('shortUrl: ', shortUrl)
         console.log('repeatedShortUrl: ', repeatedShortUrl)
       } while (repeatedShortUrl)
-      Url.create({ originalUrl: inputUrl, shortUrl })
+      await Url.create({ originalUrl: inputUrl, shortUrl })
       const url = HOST === 'localhost'? `${PROTOCAL}://${HOST}:${PORT}/${shortUrl}` : `${PROTOCAL}://${HOST}/${shortUrl}`
       res.render('show', { url })
     } else if (urlOfInterest) {
